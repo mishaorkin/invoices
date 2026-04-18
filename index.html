@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Система счетов — Misha Orkin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:14px}
+.app{max-width:960px;margin:0 auto;padding:24px 16px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.header h1{font-size:18px;font-weight:600;letter-spacing:-0.3px}
+.header .sub{font-size:11px;color:#888;margin-top:2px}
+.sync-bar{display:flex;align-items:center;gap:8px;font-size:11px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block}
+.sync-dot.ok{background:#4caf50}
+.sync-dot.err{background:#f44336}
+.sync-dot.loading{background:#ff9800;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.tabs{display:flex;border-bottom:1px solid #e0e0e0;margin-bottom:20px;overflow-x:auto}
+.tab{padding:9px 16px;font-size:12px;cursor:pointer;border:none;background:none;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-family:inherit}
+.tab:hover{color:#333}
+.tab.active{color:#1a1a1a;border-bottom:2px solid #1a1a1a;font-weight:500}
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+label{font-size:11px;color:#888;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px}
+input,select,textarea{width:100%;font-size:13px;padding:8px 10px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#1a1a1a;font-family:inherit;outline:none;transition:border-color 0.15s}
+input:focus,select:focus,textarea:focus{border-color:#555}
+input[readonly]{background:#f8f8f8;color:#666}
+textarea{resize:vertical}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23aaa'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+h3{font-size:13px;font-weight:600;margin-bottom:12px;color:#333}
+.btn{padding:8px 16px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-size:12px;font-family:inherit;background:#fff;color:#333;transition:all 0.15s;white-space:nowrap}
+.btn:hover{background:#f5f5f5;border-color:#bbb}
+.btn-primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn-primary:hover{background:#333}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-danger{color:#c62828;border-color:#ffcdd2}.btn-danger:hover{background:#ffebee}
+.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.row{display:flex;gap:8px;align-items:flex-end;margin-bottom:7px}
+.chip{display:inline-flex;align-items:center;padding:4px 11px;border:1px solid #e0e0e0;border-radius:20px;font-size:11px;cursor:pointer;background:#f8f8f8;transition:all 0.15s;margin:2px}
+.chip:hover{background:#eee;border-color:#bbb}
+.stat{background:#f8f8f8;border-radius:8px;padding:14px;text-align:center;border:1px solid #eee}
+.stat-num{font-size:20px;font-weight:600;margin-top:3px}
+.stat-label{font-size:11px;color:#888}
+.inv-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;gap:8px;flex-wrap:wrap}
+.inv-row:last-child{border-bottom:none}
+/* Статусы */
+.badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap}
+.badge-created {background:#e3f2fd;color:#1565c0}
+.badge-sent    {background:#fff8e1;color:#e65100}
+.badge-paid    {background:#e8f5e9;color:#2e7d32}
+.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.total-row.big{font-weight:600;font-size:15px;border-top:2px solid #1a1a1a;padding-top:10px;margin-top:6px}
+.month-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px}
+.bar-bg{flex:1;height:6px;background:#eee;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;background:#1a1a1a;border-radius:3px}
+.empty{text-align:center;color:#bbb;font-size:13px;padding:2rem 0}
+.profile-toggle{display:flex;gap:6px;margin-bottom:14px}
+.ptab{padding:6px 16px;font-size:12px;border-radius:6px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#888;font-family:inherit}
+.ptab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.info-box{background:#f1f8e9;border:1px solid #c5e1a5;border-radius:8px;padding:12px;font-size:12px;color:#33691e;margin-bottom:12px;line-height:1.7}
+.warn-box{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:12px;font-size:12px;color:#e65100;margin-bottom:12px;line-height:1.7}
+code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:11px}
+.line-sum{min-width:72px;text-align:right;font-size:13px;font-weight:500;color:#333}
+.ac-wrap{position:relative}
+.ac-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ccc;border-top:none;border-radius:0 0 6px 6px;z-index:200;max-height:200px;overflow-y:auto;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.ac-item{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid #f5f5f5}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover{background:#f5f5f5}
+.ac-sub{font-size:11px;color:#aaa;margin-top:2px}
+.send-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+/* Токен-экран */
+.token-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#f5f5f3;z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px}
+.token-card{background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:32px;max-width:480px;width:100%}
+.token-card h2{font-size:16px;font-weight:600;margin-bottom:8px}
+.token-card p{font-size:13px;color:#666;line-height:1.6;margin-bottom:16px}
+.token-steps{font-size:12px;color:#555;line-height:2;margin-bottom:16px;padding-left:4px}
+.token-steps a{color:#1565c0}
+/* Modal */
+.modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto;padding:20px}
+.modal-box{max-width:740px;margin:0 auto;background:#fff;border-radius:12px;padding:40px;position:relative}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}.inv-row{font-size:11px}}
+@media print{
+  body{background:#fff}
+  .app{padding:0}
+  .no-print{display:none!important}
+  .modal-bg{display:block!important;position:static;background:none;padding:0}
+  .modal-box{padding:0;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── ЭКРАН НАСТРОЙКИ ТОКЕНА ─── -->
+<div id="tokenScreen" class="token-screen" style="display:none">
+  <div class="token-card">
+    <h2>🔑 Подключение к GitHub</h2>
+    <p>Для автоматического сохранения данных нужен GitHub токен. Это делается один раз.</p>
+    <div class="token-steps">
+      1. Перейди по ссылке: <a href="https://github.com/settings/tokens/new?scopes=repo&description=InvoiceSystem" target="_blank">github.com → Settings → Tokens</a><br>
+      2. Нажми <strong>Generate token</strong><br>
+      3. Скопируй токен (начинается с <code>ghp_</code>)<br>
+      4. Вставь сюда и нажми «Подключить»
+    </div>
+    <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="margin-bottom:10px;font-family:monospace">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveToken()" style="flex:1">Подключить</button>
+      <button class="btn" onclick="skipToken()">Пропустить (без сохранения)</button>
+    </div>
+    <div id="tokenError" style="font-size:11px;color:#c62828;margin-top:8px"></div>
+  </div>
+</div>
+
+<div class="app">
+  <div class="header no-print">
+    <div>
+      <h1>Система счетов</h1>
+      <div class="sub">Микропредприятие · НДС 0% · Латвия</div>
+    </div>
+    <div class="sync-bar">
+      <span class="sync-dot" id="syncDot"></span>
+      <span id="syncLabel" style="color:#888">—</span>
+    </div>
+  </div>
+
+  <div class="tabs no-print">
+    <button class="tab active" onclick="showTab('new',this)">+ Новый счёт</button>
+    <button class="tab" onclick="showTab('list',this)">Все счета</button>
+    <button class="tab" onclick="showTab('stats',this)">Статистика</button>
+    <button class="tab" onclick="showTab('clients',this)">Клиенты</button>
+    <button class="tab" onclick="showTab('services',this)">Услуги</button>
+    <button class="tab" onclick="showTab('settings',this)">Настройки</button>
+  </div>
+
+  <!-- ─── НОВЫЙ СЧЁТ ─── -->
+  <div id="tab-new" class="section active no-print">
+    <div class="card">
+      <div class="g3" style="margin-bottom:10px">
+        <div><label>Номер счёта</label><input id="invNum" readonly></div>
+        <div><label>Дата</label><input type="date" id="invDate" oninput="updateNum()"></div>
+        <div><label>Срок оплаты</label><input type="date" id="dueDate"></div>
+      </div>
+      <div class="g2">
+        <div><label>Валюта</label>
+          <select id="currency" oninput="calcTotal()">
+            <option value="EUR">EUR €</option>
+            <option value="USD">USD $</option>
+            <option value="GBP">GBP £</option>
+          </select>
+        </div>
+        <div><label>Язык счёта</label>
+          <select id="invLang" oninput="onLangChange()">
+            <option value="lv">Latviešu (для Латвии)</option>
+            <option value="en">English (международный)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Клиент</h3>
+      <div style="margin-bottom:8px" class="ac-wrap">
+        <label>Название / Имя *</label>
+        <input type="text" id="cName" placeholder="SIA Uzņēmums / Company Name" autocomplete="off" oninput="acSearch(this.value)" onblur="setTimeout(acHide,200)">
+        <div class="ac-list" id="acList"></div>
+      </div>
+      <div class="g2" style="margin-bottom:8px">
+        <div><label>Рег. номер</label><input type="text" id="cReg"></div>
+        <div><label>НДС / VAT номер</label><input type="text" id="cPVN"></div>
+      </div>
+      <div style="margin-bottom:8px"><label>Адрес</label><textarea id="cAddr" rows="2"></textarea></div>
+      <div class="g2">
+        <div><label>Страна</label><input type="text" id="cCountry"></div>
+        <div><label>E-mail клиента</label><input type="email" id="cEmail"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Услуги</h3>
+      <div style="display:grid;grid-template-columns:3fr 0.8fr 1fr 80px 32px;gap:6px;margin-bottom:4px;padding:0 2px">
+        <div style="font-size:10px;color:#aaa;text-transform:uppercase">Описание</div>
+        <div style="font-size:10px;color:#aaa;text-transform:uppercase;text-align:center">Кол-во</div>
+        <div style="font-size:10px;color:#aaa;text-transform:uppercase;text-align:right">Цена</div>
+        <div style="font-size:10px;color:#aaa;text-transform:uppercase;text-align:right">Сумма</div>
+        <div></div>
+      </div>
+      <div id="lineItems"></div>
+      <button class="btn btn-sm" onclick="addLine()" style="margin-top:8px">+ Добавить строку</button>
+    </div>
+
+    <div class="card">
+      <div style="max-width:300px;margin-left:auto" id="totalsBox"></div>
+      <hr style="border:none;border-top:1px solid #f0f0f0;margin:14px 0">
+      <div><label>Примечания</label><textarea id="notes" rows="2"></textarea></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="saveInvoice()">💾 Сохранить счёт</button>
+      <button class="btn" onclick="previewInvoice()">👁 Предпросмотр / PDF</button>
+      <button class="btn" onclick="clearForm()">✕ Очистить</button>
+    </div>
+  </div>
+
+  <!-- ─── ВСЕ СЧЕТА ─── -->
+  <div id="tab-list" class="section no-print">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:13px;font-weight:600">Все счета</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <select id="filterYear" onchange="renderList()" style="width:auto;font-size:11px"><option value="">Все годы</option></select>
+        <select id="filterStatus" onchange="renderList()" style="width:auto;font-size:11px">
+          <option value="">Все статусы</option>
+          <option value="created">Создан</option>
+          <option value="sent">Отправлен</option>
+          <option value="paid">Оплачен</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" style="padding:0 18px"><div id="invoiceList"></div></div>
+  </div>
+
+  <!-- ─── СТАТИСТИКА ─── -->
+  <div id="tab-stats" class="section no-print">
+    <div class="g3" style="margin-bottom:14px">
+      <div class="stat"><div class="stat-label">Всего выставлено</div><div class="stat-num" id="stTotal">€0</div></div>
+      <div class="stat"><div class="stat-label">Оплачено</div><div class="stat-num" id="stPaid">€0</div></div>
+      <div class="stat"><div class="stat-label">Ожидает оплаты</div><div class="stat-num" id="stUnpaid">€0</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h3 style="margin:0">По месяцам</h3>
+        <select id="statYear" onchange="renderStats()" style="width:auto;font-size:11px"></select>
+      </div>
+      <div id="monthBars"></div>
+    </div>
+    <div class="card"><h3>По годам</h3><div id="yearTable"></div></div>
+  </div>
+
+  <!-- ─── КЛИЕНТЫ ─── -->
+  <div id="tab-clients" class="section no-print">
+    <div class="card">
+      <h3 id="clientFormTitle">Новый клиент</h3>
+      <input type="hidden" id="editClientId">
+      <div style="margin-bottom:8px"><label>Название *</label><input type="text" id="ec-name"></div>
+      <div class="g2" style="margin-bottom:8px">
+        <div><label>Рег. номер</label><input type="text" id="ec-reg"></div>
+        <div><label>НДС / VAT номер</label><input type="text" id="ec-pvn"></div>
+      </div>
+      <div style="margin-bottom:8px"><label>Адрес</label><textarea id="ec-addr" rows="2"></textarea></div>
+      <div class="g2" style="margin-bottom:8px">
+        <div><label>Страна</label><input type="text" id="ec-country"></div>
+        <div><label>E-mail</label><input type="email" id="ec-email"></div>
+      </div>
+      <div class="g2" style="margin-bottom:8px">
+        <div><label>Telegram (username)</label><input type="text" id="ec-tg" placeholder="@username"></div>
+        <div><label>WhatsApp (номер)</label><input type="text" id="ec-wa" placeholder="+37120000000"></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveClient()">Сохранить клиента</button>
+        <button class="btn" onclick="clearClientForm()">Очистить</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0 18px"><div id="clientsList"></div></div>
+  </div>
+
+  <!-- ─── УСЛУГИ ─── -->
+  <div id="tab-services" class="section no-print">
+    <div class="card">
+      <h3 id="svcFormTitle">Новая услуга</h3>
+      <input type="hidden" id="editSvcId">
+      <div class="g2" style="margin-bottom:8px">
+        <div><label>Название на латышском (LV)</label><input type="text" id="es-lv" placeholder="Videomateriālu montāža"></div>
+        <div><label>Название на английском (EN)</label><input type="text" id="es-en" placeholder="Video editing"></div>
+      </div>
+      <div class="g2">
+        <div><label>Цена (EUR)</label><input type="number" id="es-price" step="any" min="0"></div>
+        <div><label>Единица</label><input type="text" id="es-unit" placeholder="час / hour"></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveSvc()">Сохранить услугу</button>
+        <button class="btn" onclick="clearSvcForm()">Очистить</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0 18px"><div id="svcList"></div></div>
+  </div>
+
+  <!-- ─── НАСТРОЙКИ ─── -->
+  <div id="tab-settings" class="section no-print">
+    <div class="profile-toggle">
+      <button class="ptab active" onclick="showProfile('lv',this)">🇱🇻 Профиль для Латвии (LV)</button>
+      <button class="ptab" onclick="showProfile('en',this)">🌍 Международный профиль (EN)</button>
+    </div>
+    <div id="profile-lv">
+      <div class="card">
+        <h3>Мои данные — Латвия (счёт на латышском)</h3>
+        <div style="font-size:11px;color:#888;margin-bottom:12px">Используется когда язык счёта: «Latviešu»</div>
+        <div style="margin-bottom:8px"><label>Имя / Название</label><input id="lv-name"></div>
+        <div class="g2" style="margin-bottom:8px">
+          <div><label>Рег. номер</label><input id="lv-reg"></div>
+          <div><label>Налоговый режим</label><input id="lv-tax" placeholder="Mikrouzņēmumu nodoklis"></div>
+        </div>
+        <div style="margin-bottom:8px"><label>Адрес</label><textarea id="lv-addr" rows="2"></textarea></div>
+        <div class="g2" style="margin-bottom:8px">
+          <div><label>E-mail</label><input type="email" id="lv-email"></div>
+          <div><label>Телефон</label><input id="lv-phone"></div>
+        </div>
+        <div style="margin-bottom:8px"><label>Сайт</label><input id="lv-web"></div>
+        <div style="margin-bottom:8px"><label>Банк</label><input id="lv-bank"></div>
+        <div class="g2" style="margin-bottom:8px">
+          <div><label>IBAN</label><input id="lv-iban"></div>
+          <div><label>SWIFT / BIC</label><input id="lv-swift"></div>
+        </div>
+        <div><label>Примечания по умолчанию</label><textarea id="lv-notes" rows="1" placeholder="Paldies par sadarbību!"></textarea></div>
+      </div>
+    </div>
+    <div id="profile-en" style="display:none">
+      <div class="card">
+        <h3>Мои данные — Международный (счёт на английском)</h3>
+        <div style="font-size:11px;color:#888;margin-bottom:12px">Используется когда язык счёта: «English»</div>
+        <div style="margin-bottom:8px"><label>Name / Company name</label><input id="en-name"></div>
+        <div class="g2" style="margin-bottom:8px">
+          <div><label>Reg. No.</label><input id="en-reg"></div>
+          <div><label>Tax regime</label><input id="en-tax" placeholder="Micro-enterprise tax"></div>
+        </div>
+        <div style="margin-bottom:8px"><label>Address</label><textarea id="en-addr" rows="2"></textarea></div>
+        <div class="g2" style="margin-bottom:8px">
+          <div><label>E-mail</label><input type="email" id="en-email"></div>
+          <div><label>Phone</label><input id="en-phone"></div>
+        </div>
+        <div style="margin-bottom:8px"><label>Website</label><input id="en-web"></div>
+        <div style="margin-bottom:8px"><label>Bank</label><input id="en-bank"></div>
+        <div class="g2" style="margin-bottom:8px">
+          <div><label>IBAN</label><input id="en-iban"></div>
+          <div><label>SWIFT / BIC</label><input id="en-swift"></div>
+        </div>
+        <div><label>Default notes</label><textarea id="en-notes" rows="1" placeholder="Thank you for your business!"></textarea></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Нумерация счетов</h3>
+      <div style="font-size:11px;color:#888;margin-bottom:10px;line-height:1.7">
+        Формат: <code>INV<b>N</b>-ГГГГ/ММ</code> · Пример: <code>INV1-2026/04</code>, <code>INV2-2026/04</code>
+      </div>
+      <div><label>Следующий номер в этом месяце</label><input type="number" id="nextNum" value="1" min="1" style="width:120px"></div>
+    </div>
+    <div class="card">
+      <h3>☁ Автосохранение на GitHub</h3>
+      <div id="ghConnected" style="display:none">
+        <div class="info-box">Данные автоматически сохраняются в GitHub репозиторий при каждом изменении.</div>
+        <button class="btn btn-danger btn-sm" onclick="disconnectGH()">Отключить / сменить токен</button>
+      </div>
+      <div id="ghDisconnected">
+        <div class="warn-box">Автосохранение не настроено. Данные хранятся только в этом браузере.</div>
+        <button class="btn btn-primary" onclick="document.getElementById('tokenScreen').style.display='flex'">Подключить GitHub</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>💾 Ручное резервное копирование</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="exportJSON()">⬇ Скачать JSON</button>
+        <button class="btn" onclick="importJSON()">📂 Загрузить JSON</button>
+      </div>
+      <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="handleJSONImport(this)">
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="saveSettings()">💾 Сохранить настройки</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ПРЕДПРОСМОТР ─── -->
+<div id="previewModal" class="modal-bg">
+  <div class="modal-box">
+    <div class="no-print" style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:20px">
+      <button class="btn" onclick="printInvoice()">🖨 Печать / PDF</button>
+      <button class="btn btn-primary" onclick="closePreview()">✕ Закрыть</button>
+    </div>
+    <div id="previewContent"></div>
+  </div>
+</div>
+
+<!-- ─── ОТПРАВКА ─── -->
+<div id="sendModal" class="modal-bg">
+  <div class="modal-box" style="max-width:480px">
+    <h3 style="margin-bottom:16px">Отправить счёт</h3>
+    <div id="sendContent"></div>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn" onclick="closeSend()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── КОНФИГУРАЦИЯ GITHUB ──────────────────────────────────────
+const GH_USER = 'mishaorkin';
+const GH_REPO = 'invoices';
+const GH_FILE = 'db.json';
+const GH_BRANCH = 'main';
+
+// ─── БАЗА ДАННЫХ ──────────────────────────────────────────────
+let DB = {
+  invoices: [], clients: [], services: [],
+  settings: {
+    lv: { name:'', reg:'', tax:'Mikrouzņēmumu nodoklis', addr:'', email:'', phone:'', web:'', bank:'', iban:'', swift:'', notes:'Paldies par sadarbību!' },
+    en: { name:'', reg:'', tax:'Micro-enterprise tax',   addr:'', email:'', phone:'', web:'', bank:'', iban:'', swift:'', notes:'Thank you for your business!' }
+  },
+  nextNum: 1
+};
+
+let lineCount = 0;
+let ghFileSha = null;
+let saveTimer = null;
+
+// ─── GITHUB ТОКЕН ─────────────────────────────────────────────
+function getToken()  { return localStorage.getItem('gh_token'); }
+function saveToken() {
+  const t = document.getElementById('tokenInput').value.trim();
+  if (!t.startsWith('ghp_') && !t.startsWith('github_pat_')) {
+    document.getElementById('tokenError').textContent = 'Токен должен начинаться с ghp_ или github_pat_';
+    return;
+  }
+  localStorage.setItem('gh_token', t);
+  document.getElementById('tokenScreen').style.display = 'none';
+  updateGHStatus();
+  ghLoad();
+}
+function skipToken() { document.getElementById('tokenScreen').style.display = 'none'; }
+function disconnectGH() {
+  if (!confirm('Отключить GitHub? Локальные данные сохранятся.')) return;
+  localStorage.removeItem('gh_token');
+  updateGHStatus();
+}
+function updateGHStatus() {
+  const has = !!getToken();
+  document.getElementById('ghConnected').style.display    = has ? 'block' : 'none';
+  document.getElementById('ghDisconnected').style.display = has ? 'none'  : 'block';
+}
+
+// ─── СИНХРОНИЗАЦИЯ С GITHUB ───────────────────────────────────
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  dot.className = 'sync-dot' + (state ? ' ' + state : '');
+  lbl.textContent = text;
+}
+
+async function ghLoad() {
+  const token = getToken();
+  if (!token) return;
+  setSyncStatus('loading', 'Загрузка...');
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`, {
+      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (r.status === 404) { setSyncStatus('ok', 'Новая база'); await ghSave(true); return; }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    ghFileSha = data.sha;
+    // Надёжное base64 → UTF-8 через TextDecoder
+    const b64 = data.content.replace(/\n/g, '');
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const rawJson = new TextDecoder('utf-8').decode(bytes);
+    const decoded = JSON.parse(rawJson);
+    mergeDB(decoded);
+    loadSettings();
+    setSyncStatus('ok', 'Синхронизировано · ' + new Date().toLocaleTimeString('ru'));
+  } catch(e) {
+    setSyncStatus('err', 'Ошибка загрузки: ' + e.message);
+  }
+}
+
+async function ghSave(silent = false) {
+  const token = getToken();
+  if (!token) return;
+  if (!silent) setSyncStatus('loading', 'Сохранение...');
+  try {
+    // Надёжное UTF-8 → base64 через TextEncoder
+    const jsonStr = JSON.stringify(DB, null, 2);
+    const bytes = new TextEncoder().encode(jsonStr);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    const content = btoa(binary);
+
+    const body = { message: 'update db', content, branch: GH_BRANCH };
+    if (ghFileSha) body.sha = ghFileSha;
+    const r = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) {
+      const err = await r.json();
+      if (r.status === 409 || r.status === 422) { await ghLoad(); return; }
+      throw new Error(err.message || 'HTTP ' + r.status);
+    }
+    const data = await r.json();
+    ghFileSha = data.content.sha;
+    setSyncStatus('ok', 'Сохранено · ' + new Date().toLocaleTimeString('ru'));
+  } catch(e) {
+    setSyncStatus('err', 'Ошибка сохранения: ' + e.message);
+  }
+}
+
+function scheduleSave() {
+  saveLocal();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => ghSave(), 1500);
+}
+
+// ─── ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ──────────────────────────────────────
+function saveLocal() { localStorage.setItem('inv_db_v4', JSON.stringify(DB)); }
+
+function loadLocal() {
+  try {
+    const d = localStorage.getItem('inv_db_v4');
+    if (d) mergeDB(JSON.parse(d));
+  } catch(e) {}
+}
+
+function mergeDB(p) {
+  DB = { ...DB, ...p };
+  DB.settings    = { ...DB.settings,    ...(p.settings    || {}) };
+  DB.settings.lv = { ...DB.settings.lv, ...(p.settings?.lv || {}) };
+  DB.settings.en = { ...DB.settings.en, ...(p.settings?.en || {}) };
+}
+
+// ─── ВКЛАДКИ ─────────────────────────────────────────────────
+function showTab(t, el) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+  if (el) el.classList.add('active');
+  if (t === 'list')     { populateYearFilter(); renderList(); }
+  if (t === 'stats')    { populateStatYear(); renderStats(); }
+  if (t === 'clients')  renderClients();
+  if (t === 'services') renderSvcs();
+}
+function showProfile(p, el) {
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('profile-lv').style.display = p === 'lv' ? 'block' : 'none';
+  document.getElementById('profile-en').style.display = p === 'en' ? 'block' : 'none';
+}
+
+// ─── НУМЕРАЦИЯ ───────────────────────────────────────────────
+function genNum() {
+  const d = new Date(document.getElementById('invDate').value || Date.now());
+  const Y = d.getFullYear(), M = String(d.getMonth()+1).padStart(2,'0');
+  return `INV${DB.nextNum||1}-${Y}/${M}`;
+}
+function updateNum() { document.getElementById('invNum').value = genNum(); }
+
+// ─── УМОЛЧАНИЯ ФОРМЫ ─────────────────────────────────────────
+function setDefaults() {
+  const today = new Date();
+  document.getElementById('invDate').value = today.toISOString().split('T')[0];
+  const due = new Date(today); due.setDate(due.getDate()+15);
+  document.getElementById('dueDate').value = due.toISOString().split('T')[0];
+  document.getElementById('invNum').value = genNum();
+  const lang = document.getElementById('invLang').value;
+  document.getElementById('notes').value = DB.settings[lang]?.notes || '';
+  if (!document.querySelectorAll('.line-row').length) addLine();
+  renderClientChips(); renderSvcChips();
+}
+function onLangChange() {
+  const lang = document.getElementById('invLang').value;
+  document.getElementById('notes').value = DB.settings[lang]?.notes || '';
+  renderSvcChips();
+}
+
+// ─── СТРОКИ УСЛУГ ─────────────────────────────────────────────
+function addLine(desc='', qty=1, price='') {
+  lineCount++;
+  const id = lineCount;
+  const div = document.createElement('div');
+  div.className = 'row line-row'; div.id = 'line-'+id;
+  div.style.position = 'relative';
+  div.innerHTML = `
+    <div style="flex:3;position:relative">
+      <input type="text" value="${desc}" placeholder="Описание услуги" class="ld" autocomplete="off"
+        oninput="svcAcSearch(this, ${id})"
+        onblur="setTimeout(()=>svcAcHide(${id}), 200)">
+      <div class="ac-list" id="svcAc-${id}"></div>
+    </div>
+    <div style="flex:0.8"><input type="number" value="${qty}" class="lq" min="0" step="any" oninput="calcTotal()" style="text-align:center"></div>
+    <div style="flex:1"><input type="number" value="${price}" placeholder="0.00" class="lp" min="0" step="any" oninput="calcTotal()" style="text-align:right"></div>
+    <div class="line-sum">—</div>
+    <button class="btn btn-sm btn-danger" onclick="removeLine(${id})">✕</button>`;
+  document.getElementById('lineItems').appendChild(div);
+  calcTotal();
+}
+function removeLine(id) { const e=document.getElementById('line-'+id); if(e) e.remove(); calcTotal(); }
+function getLines() {
+  return [...document.querySelectorAll('.line-row')].map(r=>({
+    desc:r.querySelector('.ld').value.trim(),
+    qty:parseFloat(r.querySelector('.lq').value)||0,
+    price:parseFloat(r.querySelector('.lp').value)||0,
+    total:(parseFloat(r.querySelector('.lq').value)||0)*(parseFloat(r.querySelector('.lp').value)||0)
+  })).filter(l=>l.desc||l.price);
+}
+function sym(c){return c==='USD'?'$':c==='GBP'?'£':'€';}
+function calcTotal() {
+  const lines=getLines(), sub=lines.reduce((s,l)=>s+l.total,0), c=document.getElementById('currency').value, s=sym(c);
+  document.querySelectorAll('.line-row').forEach(r=>{
+    const q=parseFloat(r.querySelector('.lq').value)||0, p=parseFloat(r.querySelector('.lp').value)||0;
+    r.querySelector('.line-sum').textContent=s+(q*p).toFixed(2);
+  });
+  document.getElementById('totalsBox').innerHTML=`
+    <div class="total-row"><span style="color:#888">Сумма без НДС</span><span>${s}${sub.toFixed(2)}</span></div>
+    <div class="total-row" style="color:#bbb;font-size:12px"><span>НДС 0% (не облагается)</span><span>${s}0.00</span></div>
+    <div class="total-row big"><span>Итого ${c}</span><span>${s}${sub.toFixed(2)}</span></div>`;
+  return sub;
+}
+
+// ─── АВТОДОПОЛНЕНИЕ КЛИЕНТОВ ──────────────────────────────────
+function acSearch(val) {
+  const list = document.getElementById('acList');
+  if (!val || val.length < 1) { list.style.display='none'; return; }
+  const matches = DB.clients.filter(c => c.name.toLowerCase().includes(val.toLowerCase()));
+  if (!matches.length) { list.style.display='none'; return; }
+  list.innerHTML = matches.map(c => `
+    <div class="ac-item" onmousedown="acSelect(${c.id})">
+      <div>${c.name}</div>
+      <div class="ac-sub">${[c.country, c.email].filter(Boolean).join(' · ')}</div>
+    </div>`).join('');
+  list.style.display = 'block';
+}
+function acHide() { const l=document.getElementById('acList'); if(l) l.style.display='none'; }
+function acSelect(id) { loadClient(id); acHide(); }
+
+function loadClient(id) {
+  const c=DB.clients.find(x=>x.id===id); if(!c) return;
+  document.getElementById('cName').value=c.name||'';
+  document.getElementById('cReg').value=c.reg||'';
+  document.getElementById('cPVN').value=c.pvn||'';
+  document.getElementById('cAddr').value=c.addr||'';
+  document.getElementById('cCountry').value=c.country||'';
+  document.getElementById('cEmail').value=c.email||'';
+  const lv=['Latvia','Latvija','LV','Латвия'];
+  document.getElementById('invLang').value = (c.country && lv.some(x=>c.country.toLowerCase().includes(x.toLowerCase()))) ? 'lv' : (c.country ? 'en' : 'lv');
+  onLangChange();
+}
+
+// ─── АВТОДОПОЛНЕНИЕ УСЛУГ ─────────────────────────────────────
+function svcAcSearch(input, lineId) {
+  const val = input.value;
+  const list = document.getElementById('svcAc-'+lineId);
+  if (!list) return;
+  if (!val || val.length < 1) { list.style.display='none'; return; }
+  const lang = document.getElementById('invLang').value;
+  const matches = DB.services.filter(s => {
+    const name = (s[lang] || s.lv || '').toLowerCase();
+    return name.includes(val.toLowerCase());
+  });
+  if (!matches.length) { list.style.display='none'; return; }
+  list.innerHTML = matches.map(s => {
+    const name = s[lang] || s.lv;
+    const priceStr = s.price ? ` · €${parseFloat(s.price).toFixed(2)}` : '';
+    return `<div class="ac-item" onmousedown="svcAcSelect(${s.id}, ${lineId})">${name}<span style="color:#aaa;font-size:11px">${priceStr}</span></div>`;
+  }).join('');
+  list.style.display = 'block';
+}
+function svcAcHide(lineId) { const l=document.getElementById('svcAc-'+lineId); if(l) l.style.display='none'; }
+function svcAcSelect(svcId, lineId) {
+  const s = DB.services.find(x => x.id === svcId);
+  const row = document.getElementById('line-'+lineId);
+  if (!s || !row) return;
+  const lang = document.getElementById('invLang').value;
+  row.querySelector('.ld').value = s[lang] || s.lv;
+  if (s.price) row.querySelector('.lp').value = s.price;
+  calcTotal();
+  svcAcHide(lineId);
+}
+
+function renderClientChips() {}
+function renderSvcChips() {}
+
+// ─── СОХРАНЕНИЕ СЧЁТА ─────────────────────────────────────────
+function getFormData() {
+  const lang=document.getElementById('invLang').value;
+  return {
+    id:Date.now(), num:document.getElementById('invNum').value,
+    date:document.getElementById('invDate').value, due:document.getElementById('dueDate').value,
+    currency:document.getElementById('currency').value, lang,
+    client:{name:document.getElementById('cName').value,reg:document.getElementById('cReg').value,pvn:document.getElementById('cPVN').value,addr:document.getElementById('cAddr').value,country:document.getElementById('cCountry').value,email:document.getElementById('cEmail').value},
+    lines:getLines(), notes:document.getElementById('notes').value,
+    status:'created', total:calcTotal()
+  };
+}
+function saveInvoice() {
+  const d=getFormData();
+  if (!d.num) { alert('Укажите номер счёта!'); return; }
+  if (!d.client.name) { alert('Укажите название клиента!'); return; }
+  if (!d.lines.length) { alert('Добавьте хотя бы одну услугу!'); return; }
+  DB.invoices.push(d);
+  DB.nextNum=(parseInt(DB.nextNum)||1)+1;
+  // Автосохранение клиента в базу
+  autoSaveClient(d.client);
+  // Автосохранение услуг в базу
+  autoSaveServices(d.lines, d.lang);
+  scheduleSave();
+  alert('✓ Счёт '+d.num+' сохранён!');
+  clearForm();
+}
+
+function autoSaveClient(cl) {
+  if (!cl.name) return;
+  const existing = DB.clients.find(c => c.name.toLowerCase() === cl.name.toLowerCase());
+  if (!existing) {
+    DB.clients.push({ id: Date.now(), name: cl.name, reg: cl.reg||'', pvn: cl.pvn||'', addr: cl.addr||'', country: cl.country||'', email: cl.email||'', tg:'', wa:'' });
+  } else {
+    Object.assign(existing, { reg: cl.reg||existing.reg, pvn: cl.pvn||existing.pvn, addr: cl.addr||existing.addr, country: cl.country||existing.country, email: cl.email||existing.email });
+  }
+}
+
+function autoSaveServices(lines, lang) {
+  lines.forEach(l => {
+    if (!l.desc) return;
+    const existing = DB.services.find(s => {
+      const name = (s[lang] || s.lv || '').toLowerCase();
+      return name === l.desc.toLowerCase();
+    });
+    if (!existing) {
+      const svc = { id: Date.now() + Math.random(), lv: l.desc, en: lang === 'en' ? l.desc : '', price: l.price||'', unit: '' };
+      if (lang === 'en') svc.en = l.desc;
+      else svc.lv = l.desc;
+      DB.services.push(svc);
+    }
+  });
+}
+
+// Автодополнение
+function acSearch(val) {
+  const list = document.getElementById('acList');
+  if (!val || val.length < 1) { list.style.display='none'; return; }
+  const matches = DB.clients.filter(c => c.name.toLowerCase().includes(val.toLowerCase()));
+  if (!matches.length) { list.style.display='none'; return; }
+  list.innerHTML = matches.map(c => `
+    <div class="ac-item" onmousedown="acSelect(${c.id})">
+      <div>${c.name}</div>
+      <div class="ac-sub">${[c.country, c.email].filter(Boolean).join(' · ')}</div>
+    </div>`).join('');
+  list.style.display = 'block';
+}
+function acHide() { const l=document.getElementById('acList'); if(l) l.style.display='none'; }
+function acSelect(id) {
+  loadClient(id);
+  acHide();
+}
+
+// Повторить счёт
+function repeatInv(id) {
+  const src = DB.invoices.find(i => i.id === id);
+  if (!src) return;
+  // Переходим на вкладку нового счёта
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelector('.tab').classList.add('active');
+  document.getElementById('tab-new').classList.add('active');
+  // Заполняем форму данными источника
+  const today = new Date();
+  document.getElementById('invDate').value = today.toISOString().split('T')[0];
+  const due = new Date(today); due.setDate(due.getDate()+15);
+  document.getElementById('dueDate').value = due.toISOString().split('T')[0];
+  document.getElementById('invNum').value = genNum();
+  document.getElementById('currency').value = src.currency || 'EUR';
+  document.getElementById('invLang').value = src.lang || 'lv';
+  document.getElementById('cName').value    = src.client.name    || '';
+  document.getElementById('cReg').value     = src.client.reg     || '';
+  document.getElementById('cPVN').value     = src.client.pvn     || '';
+  document.getElementById('cAddr').value    = src.client.addr    || '';
+  document.getElementById('cCountry').value = src.client.country || '';
+  document.getElementById('cEmail').value   = src.client.email   || '';
+  document.getElementById('notes').value    = src.notes || '';
+  // Строки услуг
+  document.getElementById('lineItems').innerHTML = '';
+  lineCount = 0;
+  src.lines.forEach(l => addLine(l.desc, l.qty, l.price));
+  calcTotal();
+  renderSvcChips();
+  window.scrollTo(0, 0);
+}
+function clearForm() {
+  ['cName','cReg','cPVN','cAddr','cCountry','cEmail','notes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('lineItems').innerHTML='';
+  lineCount=0; setDefaults();
+}
+
+// ─── СТАТУСЫ ─────────────────────────────────────────────────
+const STATUSES = {
+  created: { label: 'Создан',    cls: 'badge-created' },
+  sent:    { label: 'Отправлен', cls: 'badge-sent'    },
+  paid:    { label: 'Оплачен',   cls: 'badge-paid'    }
+};
+function nextStatus(cur) {
+  const order = ['created','sent','paid'];
+  return order[(order.indexOf(cur)+1) % order.length];
+}
+function cycleStatus(id) {
+  const inv=DB.invoices.find(i=>i.id===id); if(!inv) return;
+  inv.status=nextStatus(inv.status||'created');
+  scheduleSave(); renderList(); renderStats();
+}
+
+// ─── СПИСОК СЧЕТОВ ────────────────────────────────────────────
+function populateYearFilter() {
+  const years=[...new Set(DB.invoices.map(i=>i.date.slice(0,4)))].sort().reverse();
+  const el=document.getElementById('filterYear'), cur=el.value;
+  el.innerHTML='<option value="">Все годы</option>'+years.map(y=>`<option value="${y}"${cur===y?' selected':''}>${y}</option>`).join('');
+}
+function renderList() {
+  const yr=document.getElementById('filterYear').value, st=document.getElementById('filterStatus').value;
+  let data=[...DB.invoices].reverse();
+  if(yr) data=data.filter(i=>i.date.startsWith(yr));
+  if(st) data=data.filter(i=>(i.status||'created')===st);
+  const el=document.getElementById('invoiceList');
+  if(!data.length){el.innerHTML='<div class="empty">Счетов нет</div>';return;}
+  el.innerHTML=data.map(inv=>{
+    const st=STATUSES[inv.status||'created'];
+    return `<div class="inv-row">
+      <div style="min-width:110px;font-weight:600;font-size:12px">${inv.num}</div>
+      <div style="flex:1;color:#666;font-size:12px">${inv.client.name||'—'}</div>
+      <div style="color:#aaa;font-size:11px;min-width:72px">${inv.date}</div>
+      <div style="font-weight:600;min-width:76px;text-align:right">${sym(inv.currency)}${(inv.total||0).toFixed(2)}</div>
+      <span class="badge ${st.cls}" onclick="cycleStatus(${inv.id})" title="Нажми чтобы сменить статус">${st.label} ▸</span>
+      <div style="display:flex;gap:4px">
+        <button class="btn btn-sm" onclick="repeatInv(${inv.id})" title="Повторить счёт">⟳</button>
+        <button class="btn btn-sm" onclick="openSend(${inv.id})" title="Отправить">✉</button>
+        <button class="btn btn-sm" onclick="previewById(${inv.id})" title="Просмотр">👁</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteInv(${inv.id})" title="Удалить">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function deleteInv(id) {
+  if(!confirm('Удалить счёт? Это действие нельзя отменить.')) return;
+  DB.invoices=DB.invoices.filter(i=>i.id!==id);
+  scheduleSave(); renderList(); populateYearFilter();
+}
+
+// ─── ОТПРАВКА ─────────────────────────────────────────────────
+function openSend(id) {
+  const inv=DB.invoices.find(i=>i.id===id); if(!inv) return;
+  const client=DB.clients.find(c=>c.name===inv.client.name)||{};
+  const isEN=inv.lang==='en';
+  const subj=encodeURIComponent((isEN?'Invoice ':'Rēķins ')+inv.num);
+  const body=encodeURIComponent(
+    isEN
+      ? `Dear ${inv.client.name},\n\nPlease find attached invoice ${inv.num} for ${sym(inv.currency)}${inv.total.toFixed(2)}.\nDue date: ${inv.due}.\n\nThank you for your business!`
+      : `Labdien ${inv.client.name},\n\nLūdzu, skatiet pievienoto rēķinu ${inv.num} par ${sym(inv.currency)}${inv.total.toFixed(2)}.\nApmaksas termiņš: ${inv.due}.\n\nPaldies par sadarbību!`
+  );
+  const tgText=encodeURIComponent(`${isEN?'Invoice':'Rēķins'} ${inv.num} — ${sym(inv.currency)}${inv.total.toFixed(2)} (${isEN?'due':'termiņš'}: ${inv.due})`);
+  const email=inv.client.email||client.email||'';
+  const tg=(client.tg||'').replace('@','');
+  const wa=(client.wa||'').replace(/\D/g,'');
+
+  document.getElementById('sendContent').innerHTML=`
+    <div style="margin-bottom:12px;padding:10px 12px;background:#f8f8f8;border-radius:6px;font-size:12px">
+      <b>${inv.num}</b> · ${inv.client.name} · ${sym(inv.currency)}${inv.total.toFixed(2)}
+    </div>
+    <p style="font-size:12px;color:#666;margin-bottom:12px">
+      Сначала открой предпросмотр и сохрани PDF через «Печать → Сохранить как PDF», затем прикрепи его к письму.
+    </p>
+    <div class="send-btns">
+      <button class="btn btn-primary" onclick="previewById(${inv.id})" style="margin-bottom:4px">👁 Открыть PDF</button>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0f0f0;margin:14px 0">
+    <div class="send-btns">
+      ${email
+        ? `<a href="mailto:${email}?subject=${subj}&body=${body}" class="btn" style="text-decoration:none">✉ Email — ${email}</a>`
+        : `<span style="font-size:12px;color:#aaa">Email не указан у клиента</span>`}
+    </div>
+    <div class="send-btns" style="margin-top:8px">
+      ${tg
+        ? `<a href="https://t.me/${tg}?text=${tgText}" target="_blank" class="btn" style="text-decoration:none">✈ Telegram — @${tg}</a>`
+        : `<span style="font-size:12px;color:#aaa">Telegram не указан у клиента</span>`}
+    </div>
+    <div class="send-btns" style="margin-top:8px">
+      ${wa
+        ? `<a href="https://wa.me/${wa}?text=${tgText}" target="_blank" class="btn" style="text-decoration:none">💬 WhatsApp — +${wa}</a>`
+        : `<span style="font-size:12px;color:#aaa">WhatsApp не указан у клиента</span>`}
+    </div>`;
+  document.getElementById('sendModal').style.display='block';
+}
+function closeSend() { document.getElementById('sendModal').style.display='none'; }
+
+// ─── СТАТИСТИКА ───────────────────────────────────────────────
+function populateStatYear() {
+  const years=[...new Set(DB.invoices.map(i=>i.date.slice(0,4)))].sort().reverse();
+  const el=document.getElementById('statYear'), cur=el.value||new Date().getFullYear().toString();
+  el.innerHTML=years.map(y=>`<option value="${y}"${cur===y?' selected':''}>${y}</option>`).join('');
+  if(!el.value&&years.length) el.value=years[0];
+}
+function renderStats() {
+  const yr=document.getElementById('statYear')?.value;
+  const paid=DB.invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+i.total,0);
+  const unpaid=DB.invoices.filter(i=>i.status!=='paid').reduce((s,i)=>s+i.total,0);
+  document.getElementById('stTotal').textContent='€'+(paid+unpaid).toFixed(2);
+  document.getElementById('stPaid').textContent='€'+paid.toFixed(2);
+  document.getElementById('stUnpaid').textContent='€'+unpaid.toFixed(2);
+  const months=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  const byM=Array(12).fill(0);
+  DB.invoices.filter(i=>!yr||i.date.startsWith(yr)).forEach(i=>{ byM[parseInt(i.date.slice(5,7))-1]+=i.total; });
+  const max=Math.max(...byM,1);
+  document.getElementById('monthBars').innerHTML=byM.map((v,i)=>`
+    <div class="month-bar">
+      <div style="width:30px;color:#aaa;font-size:11px">${months[i]}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${(v/max*100).toFixed(0)}%"></div></div>
+      <div style="width:72px;text-align:right;color:#555">€${v.toFixed(2)}</div>
+    </div>`).join('');
+  const byY={};
+  DB.invoices.forEach(i=>{const y=i.date.slice(0,4);byY[y]=(byY[y]||0)+i.total;});
+  document.getElementById('yearTable').innerHTML=
+    Object.keys(byY).sort().reverse().map(y=>`
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+        <span style="font-weight:600">${y}</span><span>€${byY[y].toFixed(2)}</span>
+      </div>`).join('')||'<div class="empty">Данных нет</div>';
+}
+
+// ─── КЛИЕНТЫ ──────────────────────────────────────────────────
+function renderClients() {
+  const el=document.getElementById('clientsList');
+  if(!DB.clients.length){el.innerHTML='<div class="empty">Клиентов нет</div>';return;}
+  el.innerHTML=DB.clients.map(c=>`
+    <div class="inv-row">
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px">${c.name}</div>
+        <div style="color:#aaa;font-size:11px">${[c.country,c.email,c.tg,c.wa].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="btn btn-sm" onclick="editClient(${c.id})">✎</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+function saveClient() {
+  const id=parseInt(document.getElementById('editClientId').value)||null;
+  const c={id:id||Date.now(),name:document.getElementById('ec-name').value.trim(),reg:document.getElementById('ec-reg').value,pvn:document.getElementById('ec-pvn').value,addr:document.getElementById('ec-addr').value,country:document.getElementById('ec-country').value,email:document.getElementById('ec-email').value,tg:document.getElementById('ec-tg').value,wa:document.getElementById('ec-wa').value};
+  if(!c.name){alert('Укажите название!');return;}
+  if(id){const i=DB.clients.findIndex(x=>x.id===id);if(i>=0)DB.clients[i]=c;}else DB.clients.push(c);
+  scheduleSave(); clearClientForm(); renderClients(); renderClientChips();
+  document.getElementById('clientFormTitle').textContent='Новый клиент';
+}
+function editClient(id) {
+  const c=DB.clients.find(x=>x.id===id);if(!c)return;
+  document.getElementById('editClientId').value=c.id;
+  document.getElementById('clientFormTitle').textContent='Редактировать: '+c.name;
+  ['name','reg','pvn','addr','country','email','tg','wa'].forEach(k=>{const e=document.getElementById('ec-'+k);if(e)e.value=c[k]||'';});
+  window.scrollTo(0,0);
+}
+function deleteClient(id){if(!confirm('Удалить клиента?'))return;DB.clients=DB.clients.filter(c=>c.id!==id);scheduleSave();renderClients();renderClientChips();}
+function clearClientForm(){document.getElementById('editClientId').value='';document.getElementById('clientFormTitle').textContent='Новый клиент';['name','reg','pvn','addr','country','email','tg','wa'].forEach(k=>{const e=document.getElementById('ec-'+k);if(e)e.value='';});}
+
+// ─── УСЛУГИ ───────────────────────────────────────────────────
+function renderSvcs() {
+  const el=document.getElementById('svcList');
+  if(!DB.services.length){el.innerHTML='<div class="empty">Услуг нет</div>';return;}
+  el.innerHTML=DB.services.map(s=>`
+    <div class="inv-row">
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${s.lv}</div><div style="color:#aaa;font-size:11px">${s.en||''}</div></div>
+      <div style="color:#666;font-size:12px;min-width:100px;text-align:right">€${(parseFloat(s.price)||0).toFixed(2)} / ${s.unit||'—'}</div>
+      <div style="display:flex;gap:4px">
+        <button class="btn btn-sm" onclick="editSvc(${s.id})">✎</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteSvc(${s.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+function saveSvc(){
+  const id=parseInt(document.getElementById('editSvcId').value)||null;
+  const s={id:id||Date.now(),lv:document.getElementById('es-lv').value.trim(),en:document.getElementById('es-en').value.trim(),price:document.getElementById('es-price').value,unit:document.getElementById('es-unit').value.trim()};
+  if(!s.lv){alert('Укажите название!');return;}
+  if(id){const i=DB.services.findIndex(x=>x.id===id);if(i>=0)DB.services[i]=s;}else DB.services.push(s);
+  scheduleSave();clearSvcForm();renderSvcs();renderSvcChips();
+  document.getElementById('svcFormTitle').textContent='Новая услуга';
+}
+function editSvc(id){const s=DB.services.find(x=>x.id===id);if(!s)return;document.getElementById('editSvcId').value=s.id;document.getElementById('svcFormTitle').textContent='Редактировать: '+s.lv;['lv','en','price','unit'].forEach(k=>{const e=document.getElementById('es-'+k);if(e)e.value=s[k]||'';});window.scrollTo(0,0);}
+function deleteSvc(id){if(!confirm('Удалить услугу?'))return;DB.services=DB.services.filter(s=>s.id!==id);scheduleSave();renderSvcs();renderSvcChips();}
+function clearSvcForm(){document.getElementById('editSvcId').value='';document.getElementById('svcFormTitle').textContent='Новая услуга';['es-lv','es-en','es-price','es-unit'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
+
+// ─── НАСТРОЙКИ ────────────────────────────────────────────────
+function saveSettings(){
+  const fields=['name','reg','tax','addr','email','phone','web','bank','iban','swift','notes'];
+  ['lv','en'].forEach(lang=>fields.forEach(k=>{const e=document.getElementById(`${lang}-${k}`);if(e)DB.settings[lang][k]=e.value;}));
+  DB.nextNum=parseInt(document.getElementById('nextNum').value)||1;
+  scheduleSave(); alert('✓ Настройки сохранены!'); updateNum();
+}
+function loadSettings(){
+  const fields=['name','reg','tax','addr','email','phone','web','bank','iban','swift','notes'];
+  ['lv','en'].forEach(lang=>fields.forEach(k=>{const e=document.getElementById(`${lang}-${k}`);if(e&&DB.settings[lang][k]!==undefined)e.value=DB.settings[lang][k];}));
+  document.getElementById('nextNum').value=DB.nextNum||1;
+}
+
+// ─── HTML СЧЁТА ───────────────────────────────────────────────
+function buildInvoiceHTML(inv){
+  const isEN=inv.lang==='en', s=isEN?DB.settings.en:DB.settings.lv, c=inv.currency;
+  const linesHTML=inv.lines.map(l=>`<tr>
+    <td style="padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:13px;line-height:1.4">${l.desc}</td>
+    <td style="padding:9px 0;border-bottom:1px solid #f0f0f0;text-align:center;font-size:13px">${l.qty}</td>
+    <td style="padding:9px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-size:13px">${sym(c)}${parseFloat(l.price).toFixed(2)}</td>
+    <td style="padding:9px 0;border-bottom:1px solid #f0f0f0;text-align:right;font-size:13px;font-weight:600">${sym(c)}${parseFloat(l.total).toFixed(2)}</td>
+  </tr>`).join('');
+  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Georgia,serif;color:#1a1a1a;font-size:14px;line-height:1.5">
+
+    <!-- Шапка: название + номер -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid #1a1a1a">
+      <div>
+        <div style="font-size:24px;font-weight:700;letter-spacing:-0.5px">${s.name||'—'}</div>
+        ${s.web?`<div style="font-size:11px;color:#999;margin-top:2px">${s.web}</div>`:''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#999;margin-bottom:4px">${isEN?'Invoice':'Rēķins'}</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:0.5px">${inv.num}</div>
+        <div style="margin-top:10px;font-size:11px;color:#666">${isEN?'Date':'Datums'}: <strong>${inv.date}</strong></div>
+        <div style="font-size:11px;color:#666">${isEN?'Due date':'Apmaksas termiņš'}: <strong>${inv.due}</strong></div>
+      </div>
+    </div>
+
+    <!-- Два блока: От кого / Кому -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:36px">
+      <!-- МОИ РЕКВИЗИТЫ -->
+      <div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:10px;font-weight:600">${isEN?'From':'No'}</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px">${s.name||'—'}</div>
+        ${s.reg?`<div style="font-size:12px;color:#555;margin-bottom:2px">${isEN?'Reg. No.':'Reģ. Nr.'}: ${s.reg}</div>`:''}
+        ${s.tax?`<div style="font-size:11px;color:#888;margin-bottom:6px">${s.tax}</div>`:''}
+        <div style="font-size:12px;color:#555;white-space:pre-line;margin-bottom:4px">${s.addr||''}</div>
+        ${s.email?`<div style="font-size:12px;color:#555">${s.email}</div>`:''}
+        ${s.phone?`<div style="font-size:12px;color:#555">${s.phone}</div>`:''}
+      </div>
+      <!-- КЛИЕНТ -->
+      <div style="background:#f8f8f8;border-radius:8px;padding:16px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:10px;font-weight:600">${isEN?'Bill To':'Rēķins izrakstīts'}</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">${inv.client.name||''}</div>
+        ${inv.client.reg?`<div style="font-size:12px;color:#555;margin-bottom:2px">${isEN?'Reg. No.':'Reģ. Nr.'}: ${inv.client.reg}</div>`:''}
+        ${inv.client.pvn?`<div style="font-size:12px;color:#555;margin-bottom:6px">${isEN?'VAT No.':'PVN Nr.'}: ${inv.client.pvn}</div>`:''}
+        <div style="font-size:12px;color:#555;white-space:pre-line;margin-bottom:2px">${inv.client.addr||''}</div>
+        ${inv.client.country?`<div style="font-size:12px;color:#555">${inv.client.country}</div>`:''}
+        ${inv.client.email?`<div style="font-size:12px;color:#555;margin-top:4px">${inv.client.email}</div>`:''}
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
+      <thead><tr style="border-bottom:2px solid #1a1a1a">
+        <th style="text-align:left;padding-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:0.8px">${isEN?'Description':'Apraksts'}</th>
+        <th style="text-align:center;padding-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;width:60px">${isEN?'Qty':'Skaits'}</th>
+        <th style="text-align:right;padding-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;width:110px">${isEN?'Unit price':'Cena'}</th>
+        <th style="text-align:right;padding-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;width:110px">${isEN?'Amount':'Summa'}</th>
+      </tr></thead>
+      <tbody>${linesHTML}</tbody>
+    </table>
+    <div style="max-width:250px;margin-left:auto;margin-bottom:36px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;color:#888"><span>${isEN?'Subtotal':'Summa bez PVN'}</span><span>${sym(c)}${inv.total.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;color:#bbb"><span>${isEN?'VAT 0% (exempt)':'PVN 0% (neapliekams)'}</span><span>${sym(c)}0.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:18px;border-top:2px solid #1a1a1a;padding-top:10px;margin-top:6px"><span>${isEN?'Total':'Kopā'} ${c}</span><span>${sym(c)}${inv.total.toFixed(2)}</span></div>
+    </div>
+    ${s.iban||s.bank?`<div style="margin-bottom:20px;padding:14px 18px;border:1px solid #e0e0e0;border-radius:8px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:10px">${isEN?'Payment Details':'Maksājuma rekvizīti'}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
+        ${s.bank?`<div><span style="color:#999">${isEN?'Bank':'Banka'}:</span> ${s.bank}</div>`:''}
+        ${s.iban?`<div><span style="color:#999">IBAN:</span> <strong>${s.iban}</strong></div>`:''}
+        ${s.swift?`<div><span style="color:#999">SWIFT/BIC:</span> ${s.swift}</div>`:''}
+        <div><span style="color:#999">${isEN?'Reference':'Mērķis'}:</span> <strong>${inv.num}</strong></div>
+      </div>
+    </div>`:''}
+    ${inv.notes?`<div style="font-size:12px;color:#666;font-style:italic;margin-bottom:12px">${inv.notes}</div>`:''}
+    <div style="font-size:10px;color:#ccc;border-top:1px solid #f0f0f0;padding-top:10px">${isEN?`Tax regime: ${s.tax}`:`Nodokļu režīms: ${s.tax}`}</div>
+  </div>`;
+}
+
+// ─── ПРЕДПРОСМОТР ─────────────────────────────────────────────
+function previewInvoice(){const inv=getFormData();inv.total=calcTotal();document.getElementById('previewContent').innerHTML=buildInvoiceHTML(inv);document.getElementById('previewModal').style.display='block';}
+function previewById(id){const inv=DB.invoices.find(i=>i.id===id);if(!inv)return;document.getElementById('previewContent').innerHTML=buildInvoiceHTML(inv);document.getElementById('previewModal').style.display='block';}
+function closePreview(){document.getElementById('previewModal').style.display='none';}
+function printInvoice(){window.print();}
+
+// ─── ЭКСПОРТ / ИМПОРТ JSON ────────────────────────────────────
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download='invoice_db_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+function importJSON(){document.getElementById('jsonFileInput').click();}
+function handleJSONImport(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const p=JSON.parse(e.target.result);
+      if(!confirm('Заменить все данные данными из файла?'))return;
+      mergeDB(p); saveLocal(); loadSettings();
+      alert('✓ Данные импортированы!'); renderList();
+    }catch(err){alert('Ошибка: некорректный файл.');}
+  };
+  reader.readAsText(file); input.value='';
+}
+
+// ─── ИНИЦИАЛИЗАЦИЯ ────────────────────────────────────────────
+async function init() {
+  loadLocal();
+  loadSettings();
+  setDefaults();
+  populateYearFilter();
+  updateGHStatus();
+  if (getToken()) {
+    await ghLoad();
+    loadSettings();
+    renderClientChips();
+    renderSvcChips();
+  } else {
+    // Показать экран токена только при первом запуске
+    if (!localStorage.getItem('gh_skipped')) {
+      document.getElementById('tokenScreen').style.display = 'flex';
+    }
+  }
+}
+
+function skipToken() {
+  localStorage.setItem('gh_skipped', '1');
+  document.getElementById('tokenScreen').style.display = 'none';
+}
+
+init();
+</script>
+</body>
+</html>
