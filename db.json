@@ -1,0 +1,34 @@
+{
+  "invoices": [],
+  "clients": [],
+  "services": [],
+  "settings": {
+    "lv": {
+      "name": "",
+      "reg": "",
+      "tax": "Mikrouzņēmumu nodoklis",
+      "addr": "",
+      "email": "",
+      "phone": "",
+      "web": "",
+      "bank": "",
+      "iban": "",
+      "swift": "",
+      "notes": "Paldies par sadarbību!"
+    },
+    "en": {
+      "name": "",
+      "reg": "",
+      "tax": "Micro-enterprise tax",
+      "addr": "",
+      "email": "",
+      "phone": "",
+      "web": "",
+      "bank": "",
+      "iban": "",
+      "swift": "",
+      "notes": "Thank you for your business!"
+    }
+  },
+  "nextNum": 1
+}
