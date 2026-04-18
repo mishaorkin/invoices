@@ -1,5 +1,33 @@
 {
-  "invoices": [],
+  "invoices": [
+    {
+      "id": 1776546416954,
+      "num": "INV1-2026/04",
+      "date": "2026-04-18",
+      "due": "2026-05-03",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "DE339331197",
+        "pvn": "",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Cinematography services, shooting for the project Tracks East, 8/02/2026",
+          "qty": 1,
+          "price": 696,
+          "total": 696
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 696
+    }
+  ],
   "clients": [],
   "services": [],
   "settings": {
@@ -30,5 +58,5 @@
       "notes": ""
     }
   },
-  "nextNum": 1
+  "nextNum": 2
 }
