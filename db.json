@@ -4,17 +4,17 @@
   "services": [],
   "settings": {
     "lv": {
-      "name": "",
-      "reg": "",
-      "tax": "Mikrouzņēmumu nodoklis",
-      "addr": "",
-      "email": "",
-      "phone": "",
-      "web": "",
-      "bank": "",
-      "iban": "",
-      "swift": "",
-      "notes": "Paldies par sadarbību!"
+      "name": "Mikhael Orkin",
+      "reg": "32512077965",
+      "tax": "MikrouzÅÄmumu nodoklis",
+      "addr": "Rūpniecības iela 16, Rīga LV1010 Latvija",
+      "email": "misha.orkin@gmail.com",
+      "phone": "+371 2 2405332",
+      "web": "www.mikhailorkin.com",
+      "bank": "AS \"Luminor Bank\"",
+      "iban": "LV36RIKO0002221868168",
+      "swift": "RIKOLV2X",
+      "notes": ""
     },
     "en": {
       "name": "",
