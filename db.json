@@ -55,7 +55,19 @@
       "total": 5300
     }
   ],
-  "clients": [],
+  "clients": [
+    {
+      "id": 1776546892738,
+      "name": "Biedrība \"Rīgas Mūzikas biedrība\"",
+      "reg": "40008330326",
+      "pvn": "",
+      "addr": "Rīga, Rembates iela 8 - 70, LV-1021",
+      "country": "Latvija",
+      "email": "",
+      "tg": "@pavelpff",
+      "wa": ""
+    }
+  ],
   "services": [],
   "settings": {
     "lv": {
