@@ -1,5 +1,33 @@
 {
-  "invoices": [],
+  "invoices": [
+    {
+      "id": 1776549505016,
+      "num": "INV3-2026/04",
+      "date": "2026-04-19",
+      "due": "",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "DE339331197",
+        "pvn": "",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Cinematography services, shooting for the project Tracks East, 8/02/2026",
+          "qty": 1,
+          "price": 696,
+          "total": 696
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 696
+    }
+  ],
   "clients": [
     {
       "id": 1776546892738,
@@ -24,7 +52,15 @@
       "wa": ""
     }
   ],
-  "services": [],
+  "services": [
+    {
+      "id": 1776549505016.7876,
+      "lv": "Cinematography services, shooting for the project Tracks East, 8/02/2026",
+      "en": "Cinematography services, shooting for the project Tracks East, 8/02/2026",
+      "price": 696,
+      "unit": ""
+    }
+  ],
   "settings": {
     "lv": {
       "name": "Mikhael Orkin",
@@ -53,5 +89,5 @@
       "notes": ""
     }
   },
-  "nextNum": 3
+  "nextNum": 4
 }
