@@ -99,8 +99,8 @@
     "lv": {
       "name": "Mikhael Orkin",
       "reg": "32512077965",
-      "tax": "MikrouzÃÂÃÂmumu nodoklis",
-      "addr": "RÅ«pniecÄ«bas iela 16, RÄ«ga LV1010 Latvija",
+      "tax": "Mikrouzņēmumu nodoklis",
+      "addr": "Rūpniecības iela 16, Rīga LV1010 Latvija",
       "email": "misha.orkin@gmail.com",
       "phone": "+371 2 2405332",
       "web": "www.mikhailorkin.com",
@@ -123,5 +123,5 @@
       "notes": ""
     }
   },
-  "nextNum": 5
+  "nextNum": 4
 }
