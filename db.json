@@ -26,6 +26,33 @@
       "notes": "",
       "status": "created",
       "total": 696
+    },
+    {
+      "id": 1776551125104,
+      "num": "INV4-2026/04",
+      "date": "2026-04-19",
+      "due": "",
+      "currency": "EUR",
+      "lang": "lv",
+      "client": {
+        "name": "Biedrība \"Rīgas Mūzikas biedrība\"",
+        "reg": "40008330326",
+        "pvn": "",
+        "addr": "Rīga, Rembates iela 8 - 70, LV-1021",
+        "country": "Latvija",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Videofilmēšanas un videomontāžas pakalpojumi",
+          "qty": 1,
+          "price": 500,
+          "total": 500
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 500
     }
   ],
   "clients": [
@@ -59,6 +86,13 @@
       "en": "Cinematography services, shooting for the project Tracks East, 8/02/2026",
       "price": 696,
       "unit": ""
+    },
+    {
+      "id": 1776551125104.654,
+      "lv": "Videofilmēšanas un videomontāžas pakalpojumi",
+      "en": "",
+      "price": 500,
+      "unit": ""
     }
   ],
   "settings": {
@@ -89,5 +123,5 @@
       "notes": ""
     }
   },
-  "nextNum": 4
+  "nextNum": 5
 }
