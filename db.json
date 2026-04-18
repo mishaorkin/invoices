@@ -26,6 +26,33 @@
       "notes": "",
       "status": "created",
       "total": 696
+    },
+    {
+      "id": 1776546734705,
+      "num": "INV2-2026/04",
+      "date": "2026-04-18",
+      "due": "2026-05-03",
+      "currency": "EUR",
+      "lang": "lv",
+      "client": {
+        "name": "Biedrība \"Rīgas Mūzikas biedrība\"",
+        "reg": "40008330326",
+        "pvn": "",
+        "addr": "Rīga, Rembates iela 8 - 70, LV-1021",
+        "country": "Latvija",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Videofilmēšanas un videomontāžas pakalpojumi",
+          "qty": 1,
+          "price": 5300,
+          "total": 5300
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 5300
     }
   ],
   "clients": [],
@@ -58,5 +85,5 @@
       "notes": ""
     }
   },
-  "nextNum": 2
+  "nextNum": 3
 }
