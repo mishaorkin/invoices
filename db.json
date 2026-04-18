@@ -11,7 +11,7 @@
         "name": "Narra GmbH",
         "reg": "DE339331197",
         "pvn": "",
-        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "addr": "KolonnenstraÃe 8, 10827 Berlin",
         "country": "Germany",
         "email": ""
       },
@@ -35,16 +35,16 @@
       "currency": "EUR",
       "lang": "lv",
       "client": {
-        "name": "Biedrība \"Rīgas Mūzikas biedrība\"",
+        "name": "BiedrÄ«ba \"RÄ«gas MÅ«zikas biedrÄ«ba\"",
         "reg": "40008330326",
         "pvn": "",
-        "addr": "Rīga, Rembates iela 8 - 70, LV-1021",
+        "addr": "RÄ«ga, Rembates iela 8 - 70, LV-1021",
         "country": "Latvija",
         "email": ""
       },
       "lines": [
         {
-          "desc": "Videofilmēšanas un videomontāžas pakalpojumi",
+          "desc": "VideofilmÄÅ¡anas un videomontÄÅ¾as pakalpojumi",
           "qty": 1,
           "price": 5300,
           "total": 5300
@@ -72,7 +72,7 @@
       "name": "Narra GmbH",
       "reg": "DE339331197",
       "pvn": "",
-      "addr": "Kolonnenstraße 8, 10827 Berlin",
+      "addr": "KolonnenstraÃe 8, 10827 Berlin",
       "country": "Germany",
       "email": "",
       "tg": "@iKolmykova",
@@ -84,8 +84,8 @@
     "lv": {
       "name": "Mikhael Orkin",
       "reg": "32512077965",
-      "tax": "MikrouzÅÄmumu nodoklis",
-      "addr": "Rūpniecības iela 16, Rīga LV1010 Latvija",
+      "tax": "MikrouzÃÂÃÂmumu nodoklis",
+      "addr": "RÅ«pniecÄ«bas iela 16, RÄ«ga LV1010 Latvija",
       "email": "misha.orkin@gmail.com",
       "phone": "+371 2 2405332",
       "web": "www.mikhailorkin.com",
