@@ -1,5 +1,33 @@
 {
-  "invoices": [],
+  "invoices": [
+    {
+      "id": 1778178253880,
+      "num": "INV4-2026/05",
+      "date": "2026-05-07",
+      "due": "",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "",
+        "pvn": "DE339331197",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Cinematography services, 11/05/2026-16/05/2026",
+          "qty": 1,
+          "price": 2500,
+          "total": 2500
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 2500
+    }
+  ],
   "clients": [
     {
       "id": 1776546892738,
@@ -16,7 +44,7 @@
       "id": 1776546983710,
       "name": "Narra GmbH",
       "reg": "DE339331197",
-      "pvn": "",
+      "pvn": "DE339331197",
       "addr": "Kolonnenstraße 8, 10827 Berlin",
       "country": "Germany",
       "email": "",
@@ -37,6 +65,13 @@
       "lv": "Videofilmēšanas un videomontāžas pakalpojumi",
       "en": "",
       "price": 500,
+      "unit": ""
+    },
+    {
+      "id": 1778178253881.402,
+      "lv": "Cinematography services, 11/05/2026-16/05/2026",
+      "en": "Cinematography services, 11/05/2026-16/05/2026",
+      "price": 2500,
       "unit": ""
     }
   ],
@@ -68,5 +103,5 @@
       "notes": ""
     }
   },
-  "nextNum": 4
+  "nextNum": 5
 }
