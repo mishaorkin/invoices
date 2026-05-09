@@ -570,20 +570,69 @@ function renderList(){
 function deleteInv(id){if(!confirm('Удалить счёт?'))return;DB.invoices=DB.invoices.filter(i=>i.id!==id);scheduleSave();renderList();populateYearFilter();}
 
 // СКАЧАТЬ PDF — открывает предпросмотр и запускает печать с нужным именем файла
-function downloadPDF(id){
+async function downloadPDF(id){
   const inv=DB.invoices.find(i=>i.id===id);if(!inv)return;
-  // Имя файла: номерсчёта_НазваниеКомпании (без пробелов и спецсимволов)
+
+  // Имя файла: INV4-2026-05_NarraGmbH.pdf
   const numPart=inv.num.replace(/\//g,'-');
-  const clientPart=(inv.client.name||'client').replace(/\s+/g,'').replace(/[^a-zA-Z0-9А-ЯЁа-яёāčēģīķļņšūž]/gi,'').slice(0,30);
-  const filename=`${numPart}_${clientPart}`;
-  document.getElementById('previewContent').innerHTML=buildInvoiceHTML(inv);
-  document.getElementById('previewModal').style.display='block';
-  setTimeout(()=>{
+  const clientPart=(inv.client.name||'client')
+    .replace(/\s+/g,'')
+    .replace(/[^a-zA-Z0-9]/g,'')
+    .slice(0,30)||'client';
+  const filename=`${numPart}_${clientPart}.pdf`;
+
+  const btn=event.currentTarget;
+  const origText=btn.textContent;
+  btn.textContent='⏳';btn.disabled=true;
+
+  try{
+    const wrap=document.createElement('div');
+    wrap.style.cssText='position:fixed;left:-9999px;top:0;width:794px;background:#fff;padding:40px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1a1a1a;font-size:13px;line-height:1.5';
+    wrap.innerHTML=buildInvoiceHTML(inv);
+    document.body.appendChild(wrap);
+
+    await loadScript('https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js');
+    await loadScript('https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js');
+
+    const canvas=await html2canvas(wrap,{scale:2,useCORS:true,backgroundColor:'#fff',logging:false});
+    document.body.removeChild(wrap);
+
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pw=pdf.internal.pageSize.getWidth();
+    const ph=pdf.internal.pageSize.getHeight();
+    const iw=pw;
+    const ih=(canvas.height*iw)/canvas.width;
+    const imgData=canvas.toDataURL('image/jpeg',0.95);
+    let posY=0;
+    while(posY<ih){
+      if(posY>0)pdf.addPage();
+      pdf.addImage(imgData,'JPEG',0,-posY,iw,ih);
+      posY+=ph;
+    }
+    pdf.save(filename);
+  }catch(e){
+    console.error('PDF error:',e);
+    // Фолбэк — печать с правильным именем
+    document.getElementById('previewContent').innerHTML=buildInvoiceHTML(inv);
+    document.getElementById('previewModal').style.display='block';
     const prev=document.title;
-    document.title=filename;
-    window.print();
-    setTimeout(()=>document.title=prev,500);
-  },250);
+    document.title=filename.replace('.pdf','');
+    setTimeout(()=>{window.print();setTimeout(()=>document.title=prev,1000);},200);
+  }finally{
+    btn.textContent=origText;btn.disabled=false;
+  }
+}
+
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    if(document.querySelector(`script[src="${src}"]`)){resolve();return;}
+    const s=document.createElement('script');
+    s.src=src;
+    s.onload=resolve;
+    s.onerror=()=>reject(new Error('Failed to load: '+src));
+    document.head.appendChild(s);
+  });
 }
 
 function openSend(id){
