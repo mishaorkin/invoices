@@ -26,6 +26,33 @@
       "notes": "",
       "status": "paid",
       "total": 2500
+    },
+    {
+      "id": 1779691448226,
+      "num": "INV6-2026/05",
+      "date": "2026-05-25",
+      "due": "2026-06-09",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "DE339331197",
+        "pvn": "DE339331197",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Cinematography services, 27/05/2026-1/06/2026",
+          "qty": 1,
+          "price": 4000,
+          "total": 4000
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 4000
     }
   ],
   "clients": [
@@ -73,6 +100,13 @@
       "en": "Cinematography services, 11/05/2026-16/05/2026",
       "price": 2500,
       "unit": ""
+    },
+    {
+      "id": 1779691448227.1501,
+      "lv": "",
+      "en": "Cinematography services, 27/05/2026-1/06/2026",
+      "price": "",
+      "unit": ""
     }
   ],
   "settings": {
@@ -103,5 +137,5 @@
       "notes": ""
     }
   },
-  "nextNum": 6
+  "nextNum": 7
 }
