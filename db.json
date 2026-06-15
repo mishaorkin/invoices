@@ -53,6 +53,39 @@
       "notes": "",
       "status": "created",
       "total": 4000
+    },
+    {
+      "id": 1781525842516,
+      "num": "INV7-2026/06",
+      "date": "2026-06-15",
+      "due": "",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "HRB 224026 B",
+        "pvn": "DE339331197",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "‘Find A Jew’ screening production",
+          "qty": 1,
+          "price": 184,
+          "total": 184
+        },
+        {
+          "desc": "Expenses incurred on behalf of the client",
+          "qty": 1,
+          "price": 117,
+          "total": 117
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 301
     }
   ],
   "clients": [
@@ -107,6 +140,20 @@
       "en": "Cinematography services, 27/05/2026-1/06/2026",
       "price": "",
       "unit": ""
+    },
+    {
+      "id": 1781525842516.0955,
+      "lv": "",
+      "en": "‘Find A Jew’ screening production",
+      "price": "",
+      "unit": ""
+    },
+    {
+      "id": 1781525842516.885,
+      "lv": "",
+      "en": "Expenses incurred on behalf of the client",
+      "price": "",
+      "unit": ""
     }
   ],
   "settings": {
@@ -137,5 +184,5 @@
       "notes": ""
     }
   },
-  "nextNum": 7
+  "nextNum": 8
 }
