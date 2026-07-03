@@ -113,6 +113,33 @@
       "notes": "",
       "status": "paid",
       "total": 2000
+    },
+    {
+      "id": 1783070993796,
+      "num": "INV9-2026/06",
+      "date": "2026-06-03",
+      "due": "",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "HRB 224026 B",
+        "pvn": "DE339331197",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Expenses incurred on behalf of the client: Business trip to Israel (May 2026)",
+          "qty": 1,
+          "price": 1458.64,
+          "total": 1458.64
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 1458.64
     }
   ],
   "clients": [
@@ -188,6 +215,13 @@
       "en": "Cinematography services",
       "price": "",
       "unit": ""
+    },
+    {
+      "id": 1783070993797.2915,
+      "lv": "",
+      "en": "Expenses incurred on behalf of the client: Business trip to Israel (May 2026)",
+      "price": "",
+      "unit": ""
     }
   ],
   "settings": {
@@ -218,5 +252,5 @@
       "notes": ""
     }
   },
-  "nextNum": 9
+  "nextNum": 10
 }
