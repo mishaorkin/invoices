@@ -167,6 +167,33 @@
       "notes": "",
       "status": "created",
       "total": 1306.9
+    },
+    {
+      "id": 1783071091936,
+      "num": "INV11-2026/07",
+      "date": "2026-07-03",
+      "due": "2026-07-18",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "HRB 224026 B",
+        "pvn": "DE339331197",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Expenses incurred on behalf of the client: Business trip to Portugal and Serbia (June 2026)",
+          "qty": 1,
+          "price": 863.34,
+          "total": 863.34
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 863.34
     }
   ],
   "clients": [
@@ -256,6 +283,13 @@
       "en": "Expenses incurred on behalf of the client: Business trip to Luxembourg and Portugal (June 2026)",
       "price": "",
       "unit": ""
+    },
+    {
+      "id": 1783071091936.8894,
+      "lv": "",
+      "en": "Expenses incurred on behalf of the client: Business trip to Portugal and Serbia (June 2026)",
+      "price": "",
+      "unit": ""
     }
   ],
   "settings": {
@@ -286,5 +320,5 @@
       "notes": ""
     }
   },
-  "nextNum": 11
+  "nextNum": 12
 }
