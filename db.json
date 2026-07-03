@@ -194,6 +194,33 @@
       "notes": "",
       "status": "created",
       "total": 863.34
+    },
+    {
+      "id": 1783074865446,
+      "num": "INV12-2026/07",
+      "date": "2026-07-03",
+      "due": "2026-07-18",
+      "currency": "EUR",
+      "lang": "en",
+      "client": {
+        "name": "VšĮ „Eastern Europe Research Foundation“",
+        "reg": "30588971",
+        "pvn": "",
+        "addr": "J. Savickio str. 4-7, Vilnius, LT-01108",
+        "country": "Lithuania",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Preparation and shooting of two interviews as part of the project (light, video, sound). Transmission of the material in its original form.",
+          "qty": 1,
+          "price": 1000,
+          "total": 1000
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 1000
     }
   ],
   "clients": [
@@ -217,6 +244,17 @@
       "country": "Germany",
       "email": "",
       "tg": "@iKolmykova",
+      "wa": ""
+    },
+    {
+      "id": 1783074865446,
+      "name": "VšĮ „Eastern Europe Research Foundation“",
+      "reg": "30588971",
+      "pvn": "",
+      "addr": "J. Savickio str. 4-7, Vilnius, LT-01108",
+      "country": "Lithuania",
+      "email": "",
+      "tg": "",
       "wa": ""
     }
   ],
@@ -290,6 +328,13 @@
       "en": "Expenses incurred on behalf of the client: Business trip to Portugal and Serbia (June 2026)",
       "price": "",
       "unit": ""
+    },
+    {
+      "id": 1783074865446.1592,
+      "lv": "",
+      "en": "Preparation and shooting of two interviews as part of the project (light, video, sound). Transmission of the material in its original form.",
+      "price": "",
+      "unit": ""
     }
   ],
   "settings": {
@@ -320,5 +365,5 @@
       "notes": ""
     }
   },
-  "nextNum": 12
+  "nextNum": 13
 }
