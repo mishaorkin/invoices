@@ -199,9 +199,21 @@
       "id": 1783074865446,
       "num": "INV12-2026/07",
       "date": "2026-07-03",
-      "due": "2026-07-18",
+      "due": "",
       "currency": "EUR",
       "lang": "en",
+      "sender": {
+        "name": "Mikhael Orkin, date of birth 13.01.1975",
+        "reg": "32512077965",
+        "tax": "Micro-enterprise tax",
+        "addr": "Rupniecibas st. 16, Riga LV1010 Latvia",
+        "email": "misha.orkin@gmail.com",
+        "phone": "+371 2 2405332",
+        "web": "www.mikhailorkin.com",
+        "bank": "Revolut Bank UAB",
+        "iban": "LT07 3250 0385 1866 5702",
+        "swift": "REVOLT21"
+      },
       "client": {
         "name": "VšĮ „Eastern Europe Research Foundation“",
         "reg": "30588971",
