@@ -296,6 +296,45 @@
       "notes": "",
       "status": "created",
       "total": 1000
+    },
+    {
+      "id": 1784745139566,
+      "num": "INV14-2026/07",
+      "date": "2026-07-22",
+      "due": "2026-08-06",
+      "currency": "EUR",
+      "lang": "en",
+      "sender": {
+        "name": "Mikhael Orkin",
+        "reg": "32512077965",
+        "tax": "Micro-enterprise tax",
+        "addr": "Rupniecibas st. 16, Riga LV1010 Latvia",
+        "email": "misha.orkin@gmail.com",
+        "phone": "+371 2 2405332",
+        "web": "www.mikhailorkin.com",
+        "bank": "AS \"Luminor Bank\"",
+        "iban": "LV36RIKO0002221868168",
+        "swift": "RIKOLV2X"
+      },
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "HRB 224026 B",
+        "pvn": "DE339331197",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Expenses incurred on behalf of the client: Business trip to Cyprus (July 2026)",
+          "qty": 1,
+          "price": 204.01,
+          "total": 204.01
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 204.01
     }
   ],
   "clients": [
@@ -410,6 +449,13 @@
       "en": "Preparation and shooting of two interviews as part of the project (light, video, sound). Transmission of the material in its original form.",
       "price": "",
       "unit": ""
+    },
+    {
+      "id": 1784745139566.8318,
+      "lv": "",
+      "en": "Expenses incurred on behalf of the client: Business trip to Cyprus (July 2026)",
+      "price": "",
+      "unit": ""
     }
   ],
   "settings": {
@@ -440,5 +486,5 @@
       "notes": ""
     }
   },
-  "nextNum": 14
+  "nextNum": 15
 }
