@@ -335,6 +335,45 @@
       "notes": "",
       "status": "created",
       "total": 204.01
+    },
+    {
+      "id": 1784745263681,
+      "num": "INV15-2026/07",
+      "date": "2026-07-22",
+      "due": "",
+      "currency": "EUR",
+      "lang": "en",
+      "sender": {
+        "name": "Mikhael Orkin",
+        "reg": "32512077965",
+        "tax": "Micro-enterprise tax",
+        "addr": "Rupniecibas st. 16, Riga LV1010 Latvia",
+        "email": "misha.orkin@gmail.com",
+        "phone": "+371 2 2405332",
+        "web": "www.mikhailorkin.com",
+        "bank": "AS \"Luminor Bank\"",
+        "iban": "LV36RIKO0002221868168",
+        "swift": "RIKOLV2X"
+      },
+      "client": {
+        "name": "Narra GmbH",
+        "reg": "HRB 224026 B",
+        "pvn": "DE339331197",
+        "addr": "Kolonnenstraße 8, 10827 Berlin",
+        "country": "Germany",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Cinematography services, 14/07/2026-19/07/2026 (Cyprus)",
+          "qty": 1,
+          "price": 895,
+          "total": 895
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 895
     }
   ],
   "clients": [
@@ -456,6 +495,13 @@
       "en": "Expenses incurred on behalf of the client: Business trip to Cyprus (July 2026)",
       "price": "",
       "unit": ""
+    },
+    {
+      "id": 1784745263681.4097,
+      "lv": "",
+      "en": "Cinematography services, 14/07/2026-19/07/2026 (Cyprus)",
+      "price": "",
+      "unit": ""
     }
   ],
   "settings": {
@@ -486,5 +532,5 @@
       "notes": ""
     }
   },
-  "nextNum": 15
+  "nextNum": 16
 }
