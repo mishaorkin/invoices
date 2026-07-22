@@ -257,6 +257,45 @@
       "notes": "",
       "status": "sent",
       "total": 1000
+    },
+    {
+      "id": 1784733890449,
+      "num": "INV13-2026/07",
+      "date": "2026-07-22",
+      "due": "",
+      "currency": "EUR",
+      "lang": "lv",
+      "sender": {
+        "name": "Mikhael Orkin",
+        "reg": "32512077965",
+        "tax": "Mikrouzņēmumu nodoklis",
+        "addr": "Rūpniecības iela 16, Rīga LV1010 Latvija",
+        "email": "misha.orkin@gmail.com",
+        "phone": "+371 2 2405332",
+        "web": "www.mikhailorkin.com",
+        "bank": "Revolut Bank UAB",
+        "iban": "LT07 3250 0385 1866 5702",
+        "swift": "REVOLT21"
+      },
+      "client": {
+        "name": "Biedrība \"Rīgas Mūzikas biedrība\"",
+        "reg": "40008330326",
+        "pvn": "",
+        "addr": "Rīga, Rembates iela 8 - 70, LV-1021",
+        "country": "Latvija",
+        "email": ""
+      },
+      "lines": [
+        {
+          "desc": "Videofilmēšanas un videomontāžas pakalpojumi",
+          "qty": 1,
+          "price": 1000,
+          "total": 1000
+        }
+      ],
+      "notes": "",
+      "status": "created",
+      "total": 1000
     }
   ],
   "clients": [
@@ -401,5 +440,5 @@
       "notes": ""
     }
   },
-  "nextNum": 13
+  "nextNum": 14
 }
